@@ -5,8 +5,8 @@
 #
 time_intervals:
   # [pt_BR] Intervalo de tempo para colocar novas naves para batalhar
-  # Valor padrão (em minutos): 10
-  send_to_battle: 10
+  # Valor padrão (em minutos): 90
+  send_to_battle: 90
 
   # [pt_BR] Intervalo de tempo para checar se houve algum erro de idle, onde nao aparece mensagem de erro
   # Valor padrão (em minutos): 5

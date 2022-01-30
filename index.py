@@ -206,147 +206,83 @@ def login():
         pass
 
 
-def sendHeroesToFight():
+def scrollHeroesPage(direction):
+    if clickBtn(images['warrior-title'], timeout=10):
+        py.moveRel(0, 100)
+        if direction == 'up':
+            py.scroll(100)
+        else:
+            py.scroll(-100)
+
+
+def chooseBossAndRemoveHeroes():
     # detect if have to choose new boss
+    logger('Deselecting heroes')
     if findImage(images['boss-hunt-choose-boss-page'], timeout=10):
         logger('Choosing new boss to fight')
         clickBtn(images['choose-new-boss-to-fight'], timeout=30)
         time.sleep(5)
 
+    # expand heroes page
+    clickBtn(images['arrow-right'], timeout=10)
+
     # detect if already has heroes selected and disselect them
     # first scroll to bottom
-    if clickBtn(images['warrior-title'], timeout=10):
-        py.moveRel(0, 100)
-        py.scroll(-100)
+    scrollHeroesPage('down')
     if findImage(images['selected-for-battle-mark'], timeout=10):
         for _ in range(3):
             clickBtn(images['selected-for-battle-mark'])
-            time.sleep(1)
+            time.sleep(2)
     # after that scroll to top and search again
-    if clickBtn(images['warrior-title'], timeout=10):
-        py.moveRel(0, 100)
-        py.scroll(100)
+    scrollHeroesPage('up')
     if findImage(images['selected-for-battle-mark'], timeout=10):
         for _ in range(3):
             clickBtn(images['selected-for-battle-mark'])
-            time.sleep(1)
+            time.sleep(2)
 
 
-# def sendSpaceshipToWork():
-#     # filtra por descending ammo
-#     hasAllships = False
-#     scrollDown = 0
-#     logger('Sending 15 ships to work')
+def battleWithTeam(team):
+    time.sleep(3)
+    clickBtn(images['vs-title'], timeout=40)
+    time.sleep(60)
 
-#     # verifica se ja tem 15 naves para batalhar
-#     if findImage(images['15-ships'], timeout=10, threshold=0.9):
-#         hasAllships = True
-
-#     if not hasAllships:
-#         clickBtn(images['newest-btn'], timeout=3)
-#         #clickBtn(images['descending-ammo'], timeout=10)
-#         for _ in range(3):
-#             py.press('down')
-#         py.press('enter')
-#         for _ in range(20):
-#             if scrollDown < 3:
-#                 if not clickBtn(images['fight-ship-btn'], timeout=5, threshold=0.97):
-#                     clickBtn(images['fight-ship-btn-deactivated'],
-#                              timeout=5, threshold=0.97)
-#                     py.scroll(-80)
-#                     scrollDown += 1
-#     py.scroll(240)
-
-#     # verifica se ja tem 15 naves para batalhar
-#     if findImage(images['15-ships'], timeout=10, threshold=0.9):
-#         hasAllships = True
-
-#     # se tiver as 15 naves se inicia a batalha
-#     if hasAllships:
-#         if clickBtn(images['fight-boss-btn'], timeout=5):
-#             logger('🚀 Started fighting boss')
-#             clickBtn(images['confirm-lose-btn'], timeout=15)
-
-#     else:
-#         logger('There isn`t 15 ships available, trying again in 10 minutes')
-#         for _ in range(20):
-#             clickBtn(images['remove-ship-btn'], timeout=5, threshold=1)
+    if clickBtn(images['defeat-title'], timeout=60):
+        logger('Battle ended with defeat, going back to heroes screen')
+        return
+    else:
+        logger('Battle ended with victory, going back to heroes screen')
+        clickBtn(images['tap-to-open-btn'], timeout=10)
+        time.sleep(5)
+        clickBtn(images['victory-title'], timeout=10)
+        return
 
 
-# def checkFightingBoss():
-#     logger('⚔ In battle')
-#     time.sleep(5)
-#     global bosses_killed
-#     global last
-#     global last_update_bosses_killed
-#     t = c['time_intervals']
+def chooseHeroesToBattle():
+    choosenHeroes = 0
 
-#     while (1):
-#         now = time.time()
-#         # Check if won battle and continues
-#         if findImage(images['reward-label'], timeout=2):
-#             clickBtn(images['confirm-lose-btn'], timeout=2)
+    # expand heroes page
+    clickBtn(images['arrow-right'], timeout=10, threshold=0.8)
 
-#         # Check if won battle and continues
-#         if findImage(images['reward-label'], timeout=2):
-#             clickBtn(images['confirm-lose-btn'], timeout=2)
-#             bosses_killed += 1
-
-#         # # Check if is in level 9
-#         if findImage(images['final-boss'], timeout=2, threshold=1):
-#             logger('Final fevel reached, reseting to level 1')
-#             clickBtn(images['surrender-btn'], timeout=10)
-#             clickBtn(images['surrender-confirm-btn'], timeout=10)
-
-#         # Check if won battle and continues
-#         if findImage(images['reward-label'], timeout=2):
-#             clickBtn(images['confirm-lose-btn'], timeout=2)
-#             bosses_killed += 1
-
-#         # Check if already loss
-#         if findImage(images['lose-img'], timeout=2):
-#             logger('Battle ended, reloading page')
-#             py.hotkey('ctrl', 'f5')
-#             last['login'] = 0
-#             last['spaceships'] = 0
-#             time.sleep(15)
-#             break
-
-#         # Check if won battle and continues
-#         if findImage(images['reward-label'], timeout=2):
-#             clickBtn(images['confirm-lose-btn'], timeout=2)
-#             bosses_killed += 1
-
-#         # Check if has no spaceships anymore
-#         if findImage(images['0-spaceships-img'], timeout=2, threshold=0.9):
-#             logger('Battle ended, no spaceships anymore, reloading page')
-#             py.hotkey('ctrl', 'f5')
-#             last['login'] = 0
-#             last['spaceships'] = 0
-#             time.sleep(15)
-#             break
-
-#         # Check if won battle and continues
-#         if findImage(images['reward-label'], timeout=2):
-#             clickBtn(images['confirm-lose-btn'], timeout=2)
-#             bosses_killed += 1
-
-#         # # Check if is in final level
-#         if findImage(images['final-boss'], timeout=2, threshold=1):
-#             logger('Final level reached, reseting to level 1')
-#             clickBtn(images['surrender-btn'], timeout=10)
-#             clickBtn(images['surrender-confirm-btn'], timeout=10)
-
-#         # Check idle error in combat screen
-#         if now - last["check_idle"] > addRandomness(t['check_idle_in_spaceships_screen'] * 60):
-#             last["check_idle"] = now
-#             if last_update_bosses_killed == bosses_killed:
-#                 logger('Idle error identified, refreshing page')
-#                 py.hotkey('ctrl', 'f5')
-#                 break
-#             logger(
-#                 f'Checking idle error, bosses killed: {bosses_killed}, last count: {last_update_bosses_killed}')
-#             last_update_bosses_killed = bosses_killed
+    for i in range(5):
+        for j in range(3):
+            if i == 4:
+                scrollHeroesPage('down')
+            else:
+                scrollHeroesPage('up')
+            if clickBtn(images[f'team-{str(i+1)}-{str(j+1)}'], threshold=0.95):
+                choosenHeroes += 1
+            time.sleep(3)
+        if choosenHeroes == 3:
+            logger(f'Starting battle with team {i}')
+            clickBtn(images['boss-hunt-btn'], timeout=10)
+            if clickBtn(images['notice-title'], timeout=10):
+                clickBtn(images['x-close-notice'])
+            else:
+                battleWithTeam(i)
+        time.sleep(5)
+        chooseBossAndRemoveHeroes()
+        choosenHeroes = 0
+        time.sleep(5)
 
 
 def main():
@@ -381,23 +317,10 @@ def main():
             last["login"] = now
             login()
 
-        if now - last['send_heroes_to_battle'] > addRandomness(t['send_to_battle']):
+        if now - last['send_heroes_to_battle'] > addRandomness(t['send_to_battle'] * 60):
             last['send_heroes_to_battle'] = now
-            sendHeroesToFight()
-
-        # if now - last["spaceships"] > addRandomness(t['send_spaceships_for_work'] * 60):
-        #     last["spaceships"] = now
-        #     sendSpaceshipToWork()
-
-        # if now - last["in_battle"] > addRandomness(t['check_spaceships_in_battle'] * 60):
-        #     last["in_battle"] = now
-        #     checkFightingBoss()
-
-        # if now - last["check_idle"] > addRandomness(t['check_idle_in_spaceships_screen'] * 60):
-        #     last["check_idle"] = now
-        #     if last_update_bosses_killed == bosses_killed:
-        #         py.hotkey('ctrl', 'f5')
-        #     last_update_bosses_killed = bosses_killed
+            chooseBossAndRemoveHeroes()
+            chooseHeroesToBattle()
 
         logger(None, progress_indicator=True)
 
