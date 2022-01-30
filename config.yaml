@@ -6,15 +6,11 @@
 time_intervals:
   # [pt_BR] Intervalo de tempo para colocar novas naves para batalhar
   # Valor padrão (em minutos): 10
-  send_spaceships_for_work: 10
-
-  # [pt_BR] Intervalo de tempo para checar se as naves estao em batalha (precisa ser menor que colocar novas naves)
-  # Valor padrão (em minutos): 5
-  check_spaceships_in_battle: 5
+  send_to_battle: 10
 
   # [pt_BR] Intervalo de tempo para checar se houve algum erro de idle, onde nao aparece mensagem de erro
   # Valor padrão (em minutos): 5
-  check_idle_in_spaceships_screen: 5
+  check_idle: 5
 
   # [en_US] Time interval to check for login request
   # Default value (in minutes): 3

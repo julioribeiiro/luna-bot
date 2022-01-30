@@ -345,8 +345,7 @@ def main():
 
     last = {
         "login": 0,
-        "sendHeroesToBattle": 0,
-        "in_battle": 0,
+        "send_heroes_to_battle": 0,
         "check_idle": 0
     }
     bosses_killed = 0
