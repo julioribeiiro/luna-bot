@@ -207,9 +207,30 @@ def login():
 
 
 def sendHeroesToFight():
+    # detect if have to choose new boss
     if findImage(images['boss-hunt-choose-boss-page'], timeout=10):
-        clickBtn(images['select-boss-green-area'], timeout=30)
+        logger('Choosing new boss to fight')
+        clickBtn(images['choose-new-boss-to-fight'], timeout=30)
         time.sleep(5)
+
+    # detect if already has heroes selected and disselect them
+    # first scroll to bottom
+    if clickBtn(images['warrior-title'], timeout=10):
+        py.moveRel(0, 100)
+        py.scroll(-100)
+    if findImage(images['selected-for-battle-mark'], timeout=10):
+        for _ in range(3):
+            clickBtn(images['selected-for-battle-mark'])
+            time.sleep(1)
+    # after that scroll to top and search again
+    if clickBtn(images['warrior-title'], timeout=10):
+        py.moveRel(0, 100)
+        py.scroll(100)
+    if findImage(images['selected-for-battle-mark'], timeout=10):
+        for _ in range(3):
+            clickBtn(images['selected-for-battle-mark'])
+            time.sleep(1)
+
 
 # def sendSpaceshipToWork():
 #     # filtra por descending ammo
